@@ -1,11 +1,10 @@
 <?php
 //файл вхождения
-//namespace app;
-session_start();
-require "formController.php";
-//require "Router.php";
+namespace app;
 
-//use app;
+use controllers\formController;
+
+session_start();
 
 $app = new formController();
 $app->actionReport();
