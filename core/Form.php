@@ -35,19 +35,20 @@ class Form
           }
         }
       }
-      $this->validate();
-      $this->checkError();
+      //$this->validate();
+      //$this->checkError();
+      return (!empty($this->fields));
     }
   }
 
 //Создаем временное хранилище данных объекта
-  public function remember(string $class = null)
+  public function remember(string $class)
   {
     $_SESSION[$class] = $this;
   }
 
 //Очищаем временное хранилище
-  public function trashSession(string $class = null)
+  public function trashSession(string $class)
   {
     unset($_SESSION[$class]);
   }
@@ -58,8 +59,11 @@ class Form
     foreach ($this->rules() as $rule) {
       $name_func = 'validate_'.$rule[1];
       $name_field = $rule[0];
-      (!empty($rule[2]))?$this->$name_func($name_field, $rule[2]):$this->$name_func($name_field);
+      $resultValidate = (!empty($rule[2]))?$this->$name_func($name_field, $rule[2]):$this->$name_func($name_field);
+      if(!$resultValidate)
+        return false;
     }
+    return true;
   }
 
 //Правила проверки данных
@@ -164,5 +168,3 @@ class Form
     echo '</pre>';
   }
 }
-
- ?>

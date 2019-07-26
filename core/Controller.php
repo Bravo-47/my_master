@@ -43,14 +43,14 @@ class Controller
     return $file;
   }
 
-  protected function redirect(string $action = null, object $model = null)
+  protected function redirect(string $url = null, object $model = null)
   {
     if($this->model === null)
       $this->model = $model;
-    $className = str_replace('Controller', '', get_class($this));
+    //$className = str_replace('Controller', '', get_class($this));
     $protocol = (!empty($_SERVER['HTTPS']))?'https':'http';
     $server = $_SERVER['SERVER_NAME'];
-    header("Location:$protocol://$server/$className/$action");
+    header("Location:$protocol://$server/$url");
   }
 
   protected function render(string $view = null, object $model = null)
