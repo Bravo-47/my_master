@@ -3,6 +3,7 @@ namespace models;
 
 
 use app\models\Form;
+require __DIR__ . "/../core/Form.php";
 
 /**
  *

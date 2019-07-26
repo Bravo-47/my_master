@@ -13,6 +13,6 @@
 
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
       <script type="text/javascript" src="vendor/twbs/bootstrap/dist/js/bootstrap.js"></script>
-      <pre><?php var_dump($app);?></pre> 
+      <!--<pre><?php //var_dump($app);?></pre> -->
   </body>
 </html>

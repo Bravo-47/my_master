@@ -1,21 +1,22 @@
 <?php
-namespace controllers;
+
+namespace app;
 
 
-use app\controllers\Controller;
-use models\Report;
+//use app\controllers\Controller;
+//use models\Report;
 
 //require __DIR__ . "/../core/Controller.php";
 /**
  *
  */
-class formController extends Controller
+class FormController extends \app\Controller
 {
 
   public function __construct()
   {
     // code...
-    print "formController";
+    echo "FormController";
   }
 
 
@@ -23,7 +24,7 @@ class formController extends Controller
     {
       $this->title = 'Отчет о проекте';
       if(!empty($_POST)){
-        $model = new Report();
+        $model = new \models\Report();
         if ($model->load() && $model->checkError()){
           return $this->render('form2', $model);
         } else {
@@ -35,7 +36,7 @@ class formController extends Controller
 
     public function actionNote()
     {
-      $model = new Report();
+      $model = new \models\Report();
       if ($model->checkError()){
         $model->printData();
         return $this->render('form3', $model);
@@ -45,12 +46,18 @@ class formController extends Controller
 
     public function actionConfirm()
     {
-      $model = new Report();
+      $model = new \models\Report();
       if ($model->checkError()){
         $model->printData();
         return $this->render('finish');
       }
       return $this->render('form2');
+    }
+
+    public function actionFinish()
+    {
+      // code...
+      return $this->render('finish');
     }
 
 }

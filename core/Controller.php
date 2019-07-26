@@ -1,6 +1,6 @@
 <?php
 
-namespace app\controllers;
+namespace app;
 
 /**
  * Controller for Sender model
@@ -14,12 +14,18 @@ class Controller
   public function __construct()
   {
     // code...
-    print "Controller";
+    echo "Controller";
+  }
+
+  public function actionIndex()
+  {
+    // code...
+    echo 'Hello index';
   }
 
   protected function getContent(string $partView = null)
   {
-    $tpl = $partView.'View.php';
+    $tpl = __DIR__ . '/../View/' . $partView.'View.php';
     $content = (!empty($partView) && file_exists($tpl)) ? file_get_contents($tpl) : 'Пустой контент';
     if(!empty($this->model->fields))
       foreach ($this->model->fields as $key => $value) {
@@ -30,7 +36,7 @@ class Controller
 
   protected function getLayout(string $partView = null)
   {
-    $tpl = 'layout_'.$this->layout.'.php';
+    $tpl = __DIR__ . '/../View/' . 'layout_'.$this->layout.'.php';
     $file = (file_exists($tpl))?file_get_contents($tpl):'Пустой шаблон';
     $file = str_replace('{title}', $this->title, $file);
     $file = str_replace('{content}', $this->getContent($partView), $file);

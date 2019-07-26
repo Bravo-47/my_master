@@ -1,5 +1,5 @@
 <div class="row justify-content-md-center">
-  <form class="my-form" action="index.php" method="post">
+  <form class="my-form" action="/form/confirm" method="post">
     <select class="" class="form-control" name="category">
       <option value=1>Критически
       <option value=2>Отностительно
