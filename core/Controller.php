@@ -11,12 +11,13 @@ class Controller
   public $layout = 'main';
   public $model = null;
 
-  function __construct()
+  public function __construct()
   {
     // code...
+    print "Controller";
   }
 
-  protected function getContent(string $partView = '')
+  protected function getContent(string $partView = null)
   {
     $tpl = $partView.'View.php';
     $content = (!empty($partView) && file_exists($tpl)) ? file_get_contents($tpl) : 'Пустой контент';
@@ -27,7 +28,7 @@ class Controller
     return $content;
   }
 
-  protected function getLayout(string $partView = '')
+  protected function getLayout(string $partView = null)
   {
     $tpl = 'layout_'.$this->layout.'.php';
     $file = (file_exists($tpl))?file_get_contents($tpl):'Пустой шаблон';
@@ -36,7 +37,7 @@ class Controller
     return $file;
   }
 
-  protected function redirect(string $action = '', object $model = null)
+  protected function redirect(string $action = null, object $model = null)
   {
     if($this->model === null)
       $this->model = $model;
@@ -46,7 +47,7 @@ class Controller
     header("Location:$protocol://$server/$className/$action");
   }
 
-  protected function render(string $view = '', object $model = null)
+  protected function render(string $view = null, object $model = null)
   {
     if($this->model === null)
       $this->model = $model;

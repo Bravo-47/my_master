@@ -1,7 +1,9 @@
 <?php
 namespace models;
 
-use models\Form;
+
+use app\models\Form;
+
 /**
  *
  */

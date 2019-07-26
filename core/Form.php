@@ -1,6 +1,6 @@
 <?php
 
-namespace models;
+namespace app\models;
 
 
 /**
@@ -41,13 +41,13 @@ class Form
   }
 
 //Создаем временное хранилище данных объекта
-  public function remember(string $class = '')
+  public function remember(string $class = null)
   {
     $_SESSION[$class] = $this;
   }
 
 //Очищаем временное хранилище
-  public function trashSession(string $class = '')
+  public function trashSession(string $class = null)
   {
     unset($_SESSION[$class]);
   }
@@ -63,7 +63,7 @@ class Form
   }
 
 //Правила проверки данных
-  protected function secureData(string $value = '')
+  protected function secureData(string $value = null)
   {
     return htmlspecialchars($value);
   }
