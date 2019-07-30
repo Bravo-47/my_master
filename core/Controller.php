@@ -1,6 +1,8 @@
 <?php
 
-namespace app;
+namespace app\controllers;
+
+use app\models\Messages;
 
 /**
  * Controller for Sender model
@@ -14,23 +16,24 @@ class Controller
   public function __construct()
   {
     // code...
-    echo "Controller";
+    Messages::log("Controller");
   }
 
   public function actionIndex()
   {
-    // code...
-    echo 'Hello index';
+    global $app;
+    $app->messages->addLog("Hello index");
   }
 
   protected function getContent(string $partView = null)
   {
-    $tpl = __DIR__ . '/../View/' . $partView.'View.php';
+    $tpl = __DIR__ . '/../View/' . ucfirst($partView) . '.php';
     $content = (!empty($partView) && file_exists($tpl)) ? file_get_contents($tpl) : 'Пустой контент';
     if(!empty($this->model->fields))
       foreach ($this->model->fields as $key => $value) {
         $content =  str_replace('{'.$key.'}', $value, $content);
       }
+    $content = preg_replace("'\{.*?\}'", '', $content);
     return $content;
   }
 
@@ -55,6 +58,8 @@ class Controller
 
   protected function render(string $view = null, object $model = null)
   {
+    if($model !== null)
+      $_SESSION[$view] = $model;
     if($this->model === null)
       $this->model = $model;
     if(!empty($view))

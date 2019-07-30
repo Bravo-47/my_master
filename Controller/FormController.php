@@ -1,68 +1,85 @@
 <?php
 
-namespace app;
+namespace controllers;
 
 
 //use app\controllers\Controller;
+use app;
+use app\models\Messages;
 use models\Report;
+use models\Note;
+use app\controllers\Controller;
 
 //require __DIR__ . "/../core/Controller.php";
 /**
  *
  */
-class FormController extends \app\Controller
+class FormController extends Controller
 {
 
   public function __construct()
   {
-    // code...
-    echo "FormController";
+    global $app;
+    Messages::log("FormController");
+  }
+
+  public function __destruct()
+  {
+    echo '<pre>';
+    var_dump($_SESSION);
+    echo '</pre>';
   }
 
 
     public function actionReport()
     {
+      global $app;
       $this->title = 'Отчет о проекте';
-      if(!empty($_POST)){
-        $model = new \models\Report();
-        if ($model->load() && $model->validate() && $model->checkError()){
-          $model->remember('report');
-          return $this->render('form2', $model);
-        } else {
-          $model->printErrors();
-        }
-      }
-      return $this->render('form1');
+      // if(!empty($_POST)){
+        $model = new Report();
+        if($model->load())
+          if ($model->validate() && $app->messages->checkError()){
+            return $this->redirect('form/note', $model);
+          } else {
+            $app->messages->printErrors();
+            return $this->render('Report', $model);
+          }
+      // }
+      return $this->render('Report');
     }
 
     public function actionNote()
     {
+      global $app;
       $this->title = 'Замечания к проекту';
-      $model = new \models\Report();
-      //
-      if (!empty($_SESSION['report'])) {
-        
-        return $this->redirect('form3', $model);
+      $model = new Note();
+      if($model->load())
+      if ($model->validate() && $app->messages->checkError()){
+        $_SESSION['note'][] = $model->fields;
+      } else {
+        $app->messages->printErrors();
+        return $this->render('note', $model);
       }
-      var_dump($_SESSION);
-      return $this->render('form2');
+      return $this->render('note');
     }
 
     public function actionConfirm()
     {
+      global $app;
       $this->title = 'Сохранить настройки';
-      $model = new \models\Report();
-      if ($model->checkError()){
-        return $this->render('finish');
-      }
-      return $this->render('form2');
+      $report = new Report();
+      $note = new Note();
+      if(!empty($_SESSION['Note']))
+        return $this->redirect('form/finish');
+
+      return $this->render('confirm');
     }
 
     public function actionFinish()
     {
-      // code...
-      $model = new \models\Report();
-      $model->trashSession();
+      $this->title = 'Окончание действия';
+      $model = new Report();
+      //$model->trashSession();
       return $this->render('finish');
     }
 

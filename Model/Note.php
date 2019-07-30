@@ -8,14 +8,14 @@ use app\models\Messages;
 /**
  *
  */
-class Report extends Form
+class Note extends Form
 {
 
   function __construct()
   {
     // code...
     global $app;
-    Messages::log("Report");
+    Messages::log("Note");
   }
 
   /**
@@ -24,13 +24,12 @@ class Report extends Form
     public function rules()
     {
       return [
-        ['name', 'string',255],
-        ['name', 'require'],
         ['date', 'date', 'd.m.Y'],
         ['date', 'require'],
         ['description', 'text'],
-        ['status', 'integer'],
-        ['status', 'require'],
+        ['description', 'require'],
+        ['category', 'integer'],
+        ['category', 'require'],
       ];
     }
 
@@ -38,6 +37,7 @@ class Report extends Form
       public function save($value='')
       {
         // code...
+        $_SESSION['Note'][] = $this;
       }
 
 }

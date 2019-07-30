@@ -1,3 +1,3 @@
-<form class="my-form3" action="/form/finish" method="post">
+<form class="my-form3" action="" method="post">
   <input type="submit" name="save" value="Подтвердить">
 </form>

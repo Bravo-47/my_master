@@ -7,9 +7,10 @@ namespace app;
   class View
   {
 
-    function __construct(argument)
+    function __construct()
     {
       // code...
+      Messages::log("View");
     }
 
     public function FunctionName($value='')

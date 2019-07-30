@@ -1,5 +1,5 @@
-<div class="text-center">
-  <form class="form-signin" action="/form/note" method="post">
+<div class="wrap">
+  <form class="form-group" action="" method="post">
     <input class="form-control" type="text" name="name" value="" placeholder="Название">
     <textarea class="form-control" name="description" rows="8" cols="40" placeholder="Описание"></textarea>
     <input type="date" class="form-control" name="date" value="" >

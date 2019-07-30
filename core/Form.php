@@ -11,9 +11,12 @@ class Form
   public $fields = array();
   public $errors = array();
 
+
   function __construct()
   {
 
+    global $app;
+    Messages::log("Form");
   }
 
 //Правила валидации полей формы
@@ -25,6 +28,8 @@ class Form
 //Загружаем данные в локальную переменную класса
   public function load()
   {
+    global $app;
+    Messages::log("Load");
     if (!empty($_POST)){
       foreach ($_POST as $key => $value) {
         if(!is_array($value)){
@@ -35,14 +40,16 @@ class Form
           }
         }
       }
-      //$this->validate();
-      //$this->checkError();
       return (!empty($this->fields));
-    }
+    } /*elseif(!empty($_SESSION['report']))
+      $this->fields = $_SESSION['report'];*/
+
+      return false;
   }
 
+
 //Создаем временное хранилище данных объекта
-  public function remember(string $class)
+  public function saveToSession(string $class)
   {
     $_SESSION[$class] = $this;
   }
@@ -56,14 +63,20 @@ class Form
 //Проверяем поля соответствию правилам
   public function validate()
   {
-    foreach ($this->rules() as $rule) {
-      $name_func = 'validate_'.$rule[1];
-      $name_field = $rule[0];
-      $resultValidate = (!empty($rule[2]))?$this->$name_func($name_field, $rule[2]):$this->$name_func($name_field);
-      if(!$resultValidate)
-        return false;
-    }
-    return true;
+    global $app;
+    Messages::log('Validate');
+    // $app->messages->addLog("Validate");
+    $validate = true;
+    $resultValidate = false;
+    if(!empty($this->rules()))
+      foreach ($this->rules() as $rule) {
+        $name_func = 'validate_'.$rule[1];
+        $name_field = $rule[0];
+        $resultValidate = (!empty($rule[2]))?$this->$name_func($name_field, $rule[2]):$this->$name_func($name_field);
+        if($validate && $resultValidate === false)
+          $validate = false;
+      }
+    return $validate;
   }
 
 //Правила проверки данных
@@ -75,11 +88,12 @@ class Form
 //Провека строковых данных, и защита от инъекций
   protected function validate_string(string $key, int $len = 255)
   {
+    global $app;
     if(!empty($this->fields[$key])){
       $this->fields[$key] = $this->secureData($this->fields[$key]);
     }
     if (!empty($len) && iconv_strlen($this->fields[$key]) > $len){
-      $this->errors[] = "Количество символов превышает максимальное значение $len у поля $key";
+      $app->messages->addError("Количество символов превышает максимальное значение $len у поля $key");
       return false;
     }
     return true;
@@ -88,11 +102,12 @@ class Form
 //Поверка объемных текстовых данных
   protected function validate_text(string $key, int $len = 1000)
   {
+    global $app;
     if(!empty($this->fields[$key])){
       $this->fields[$key] = $this->secureData($this->fields[$key]);
     }
     if (!empty($len) && iconv_strlen($this->fields[$key]) > $len){
-      $this->errors[] = "Количество символов превышает максимальное значение $len у поля $key";
+      $app->messages->addError("Количество символов превышает максимальное значение $len у поля $key");
       return false;
     }
     return true;
@@ -101,6 +116,7 @@ class Form
 //Проверка даты соответствию формату данных
   protected function validate_date(string $key, string $format = 'DD/MM/YYYY')
   {
+    global $app;
     switch ($format) {
       case 'DD/MM/YYYY':
         $pattern = '(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d';
@@ -115,7 +131,7 @@ class Form
       return true;
     }
     else {
-      $this->errors[] = 'Не верный формат даты';
+      $app->messages->addError('Не верный формат даты');
       return false;
     }
   }
@@ -123,8 +139,9 @@ class Form
 //проверка на обязательность заполнения поля
   protected function validate_require(string $key, $val = null)
   {
+    global $app;
     if(empty($this->fields[$key])){
-      $this->errors[] = 'Не указан обязательный параметр '.$key;
+      $app->messages->addError('Не указан обязательный параметр '.$key);
       return false;
     } else
       return true;
@@ -133,31 +150,29 @@ class Form
 //Проверка числовых данных
   protected function validate_integer(string $key)
   {
+    global $app;
     if(!empty($this->fields[$key]) && preg_match('/[0-9]/', $this->fields[$key])){
       return true;
     }
     else {
-      $this->errors[]= 'Не верный формат числового значения '.$key;
+      $app->messages->addError('Не верный формат числового значения '.$key);
       return false;
     }
   }
 
 //Проверка на наличие ошибок в форме
-  public function checkError()
-  {
-    if(!empty($this->errors)){
-      return false;
-    } else
-      return true;
-  }
+  // public function checkError()
+  // {
+  //   return (!empty($this->errors));
+  // }
 
 //Вывод ошибок
-  public function printErrors()
-  {
-    foreach ($this->errors as $error) {
-      echo '<div class="alert alert-danger" >'.$error.'</div>';
-    }
-  }
+  // public function printErrors()
+  // {
+  //   foreach ($this->errors as $error) {
+  //     echo '<div class="alert alert-danger" >'.$error.'</div>';
+  //   }
+  // }
 
 //служебный вывод данных
 //TODO: перед запуском удалить

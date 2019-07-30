@@ -1,6 +1,13 @@
 <?php
 
 namespace app;
+
+use controllers\FormController;
+use app\models\Messages;
+
+global $app;
+// require __DIR__ . "/../Controller/FormController.php";
+//use controllers\FormController;
 /*
 считываем строку браузера
 вызываем контроллер и его экшн
@@ -11,36 +18,39 @@ namespace app;
  */
 class Router
 {
-  public $app;
+  public $errors = array();
   protected $url;
   protected $protocol;
   protected $domain;
   protected $controller;
   protected $action;
   protected $params;
+  public $messages;
 
   function __construct()
   {
-    // code...
-    //$this->app
+    //$app->messages->addLog('text');
+    $this->messages = new Messages();
+    Messages::log('Router');
   }
 
   function run(){
     if($_SERVER['REQUEST_URI'] !== '/'){
       $uri = explode('/',$_SERVER['REQUEST_URI']);
-      $controllerName = '\\app\\' . ucfirst($uri[1]) . 'Controller';
+      // $controllerName = ucfirst($uri[1]) . 'Controller';
+      $controllerName = '\\controllers\\' . ucfirst($uri[1]) . 'Controller';
       if(!empty($uri[2])){
         $actionPicies = explode('?',$uri[2]);
         $actionName = (!empty($actionPicies[0])) ? 'action' . ucfirst($actionPicies[0]) : 'actionIndex';
-        $params = (!empty($actionPicies[1])) ? $actionPicies[1] : '';
-        var_dump($actionName);
+        $params = (!empty($actionPicies[1])) ? explode('&',$actionPicies[1]) : array();
+        //$this->messages->addLog($actionName);
         $app = new $controllerName();
-        $app->$actionName();
+        $app->$actionName($params);
       } else {
-        echo 'Не вызван экшн';
+        $this->messages->addError('Не вызван экшн');
       }
     } else {
-      echo 'Пустая строка';
+      $this->messages->addError('Пустая строка');
     }
   }
 
